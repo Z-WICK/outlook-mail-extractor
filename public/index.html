@@ -22,7 +22,15 @@
           <p>本地邮件提取控制台</p>
         </div>
       </div>
-      <div class="status-pill" id="statusText" aria-live="polite">就绪</div>
+      <div class="topbar-actions">
+        <div class="status-pill" id="statusText" aria-live="polite">就绪</div>
+        <button class="icon-button settings-toggle" id="settingsToggle" data-testid="settings-toggle" type="button" aria-label="打开高级配置" title="高级配置" aria-haspopup="dialog" aria-controls="settingsDialog" aria-expanded="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z"></path>
+            <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.05.05a2 2 0 1 1-2.83 2.83l-.05-.05A1.7 1.7 0 0 0 15 19.37a1.7 1.7 0 0 0-1 .58V20a2 2 0 1 1-4 0v-.05a1.7 1.7 0 0 0-1-.58 1.7 1.7 0 0 0-1.88.34l-.05.05a2 2 0 1 1-2.83-2.83l.05-.05A1.7 1.7 0 0 0 4.63 15a1.7 1.7 0 0 0-.58-1H4a2 2 0 1 1 0-4h.05a1.7 1.7 0 0 0 .58-1 1.7 1.7 0 0 0-.34-1.88l-.05-.05a2 2 0 1 1 2.83-2.83l.05.05A1.7 1.7 0 0 0 9 4.63a1.7 1.7 0 0 0 1-.58V4a2 2 0 1 1 4 0v.05a1.7 1.7 0 0 0 1 .58 1.7 1.7 0 0 0 1.88-.34l.05-.05a2 2 0 1 1 2.83 2.83l-.05.05A1.7 1.7 0 0 0 19.37 9c.22.33.42.66.58 1H20a2 2 0 1 1 0 4h-.05a1.7 1.7 0 0 0-.55 1Z"></path>
+          </svg>
+        </button>
+      </div>
     </header>
 
     <main class="workspace">
@@ -70,26 +78,6 @@
           <input id="clientId" data-testid="client-id" name="clientId" type="hidden">
           <input id="refreshToken" data-testid="refresh-token" name="refreshToken" type="hidden">
 
-          <div class="mailbox-row">
-            <fieldset class="mailboxes">
-              <legend>邮箱夹</legend>
-              <label class="check-option">
-                <input type="checkbox" name="mailbox" value="INBOX" checked>
-                <span>INBOX</span>
-              </label>
-              <label class="check-option">
-                <input type="checkbox" name="mailbox" value="Junk" checked>
-                <span>Junk</span>
-              </label>
-            </fieldset>
-            <button class="icon-button settings-toggle" id="settingsToggle" data-testid="settings-toggle" type="button" aria-label="打开高级配置" title="高级配置" aria-haspopup="dialog" aria-controls="settingsDialog" aria-expanded="false">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z"></path>
-                <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.05.05a2 2 0 1 1-2.83 2.83l-.05-.05A1.7 1.7 0 0 0 15 19.37a1.7 1.7 0 0 0-1 .58V20a2 2 0 1 1-4 0v-.05a1.7 1.7 0 0 0-1-.58 1.7 1.7 0 0 0-1.88.34l-.05.05a2 2 0 1 1-2.83-2.83l.05-.05A1.7 1.7 0 0 0 4.63 15a1.7 1.7 0 0 0-.58-1H4a2 2 0 1 1 0-4h.05a1.7 1.7 0 0 0 .58-1 1.7 1.7 0 0 0-.34-1.88l-.05-.05a2 2 0 1 1 2.83-2.83l.05.05A1.7 1.7 0 0 0 9 4.63a1.7 1.7 0 0 0 1-.58V4a2 2 0 1 1 4 0v.05a1.7 1.7 0 0 0 1 .58 1.7 1.7 0 0 0 1.88-.34l.05-.05a2 2 0 1 1 2.83 2.83l-.05.05A1.7 1.7 0 0 0 19.37 9c.22.33.42.66.58 1H20a2 2 0 1 1 0 4h-.05a1.7 1.7 0 0 0-.55 1Z"></path>
-              </svg>
-            </button>
-          </div>
-
           <div class="settings-overlay" id="settingsDialog" data-testid="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" hidden>
             <div class="settings-panel" id="settingsPanel">
               <div class="settings-header">
@@ -101,6 +89,18 @@
                   </svg>
                 </button>
               </div>
+
+              <fieldset class="mailboxes">
+                <legend>邮箱夹</legend>
+                <label class="check-option">
+                  <input type="checkbox" name="mailbox" value="INBOX" checked>
+                  <span>INBOX</span>
+                </label>
+                <label class="check-option">
+                  <input type="checkbox" name="mailbox" value="Junk" checked>
+                  <span>Junk</span>
+                </label>
+              </fieldset>
 
               <div class="field-grid two">
                 <label class="field">

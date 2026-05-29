@@ -132,7 +132,7 @@ test('UI script automatically fetches messages after selecting a browser account
   assert.match(script, /await runMessageFetch\(\)/);
 });
 
-test('UI keeps mailbox selection under account pool and moves advanced options into settings dialog', () => {
+test('UI puts the settings trigger beside status and keeps mailbox selection inside settings dialog', () => {
   const html = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
   const script = fs.readFileSync(path.join(publicDir, 'app.js'), 'utf8');
   const styles = fs.readFileSync(path.join(publicDir, 'styles.css'), 'utf8');
@@ -143,12 +143,14 @@ test('UI keeps mailbox selection under account pool and moves advanced options i
   assert.match(html, /aria-label="打开高级配置"/);
   assert.match(html, /aria-label="关闭高级配置"/);
   assert.match(html, /class="settings-overlay"[^>]*hidden/);
-  assert.match(html, /id="settingsDialog"[\s\S]*id="senderFilters"[\s\S]*id="sessionMemory"[\s\S]*<\/div>\s*<\/div>\s*<div class="actions">/);
-  assert.ok(html.indexOf('accountPoolTitle') < html.indexOf('class="mailbox-row"'));
-  assert.ok(html.indexOf('class="mailbox-row"') < html.indexOf('settingsToggle'));
+  assert.match(html, /class="topbar-actions"[\s\S]*id="statusText"[\s\S]*id="settingsToggle"[\s\S]*<\/div>\s*<\/header>/);
+  assert.match(html, /id="settingsDialog"[\s\S]*<fieldset class="mailboxes"[\s\S]*name="mailbox"[\s\S]*id="senderFilters"[\s\S]*id="sessionMemory"[\s\S]*<\/div>\s*<\/div>\s*<div class="actions">/);
+  assert.doesNotMatch(html, /class="mailbox-row"/);
+  assert.ok(html.indexOf('id="settingsToggle"') < html.indexOf('<main class="workspace">'));
   assert.match(script, /settingsToggle: document\.getElementById\('settingsToggle'\)/);
   assert.match(script, /function openSettingsDialog\(\)/);
   assert.match(script, /function closeSettingsDialog\(\)/);
+  assert.match(styles, /\.topbar-actions/);
   assert.match(styles, /\.settings-overlay/);
   assert.match(styles, /\.settings-panel/);
 });

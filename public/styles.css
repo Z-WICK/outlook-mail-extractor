@@ -58,6 +58,14 @@ button {
   padding: 18px 0 22px;
 }
 
+.topbar-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
 .brand {
   display: flex;
   align-items: center;
@@ -348,18 +356,6 @@ button:focus-visible {
   border-radius: 8px;
   margin: 2px 0 14px;
   padding: 12px;
-}
-
-.mailbox-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: stretch;
-  margin: 2px 0 14px;
-}
-
-.mailbox-row .mailboxes {
-  margin: 0;
 }
 
 .mailboxes legend {
@@ -703,12 +699,20 @@ button:focus-visible {
     padding: 14px;
   }
 
-  .topbar,
   .result-header,
   .import-title,
   .import-actions {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .topbar-actions {
+    align-self: stretch;
   }
 
   .field-grid.two,
@@ -724,11 +728,8 @@ button:focus-visible {
     flex-wrap: wrap;
   }
 
-  .mailbox-row {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
   .settings-toggle {
+    flex: 0 0 auto;
     width: 44px;
   }
 
