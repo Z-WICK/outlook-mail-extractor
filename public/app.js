@@ -411,6 +411,7 @@ async function selectAccount(id) {
       persistSessionConfig();
     }
     await loadAccounts(elements.accountSearch.value);
+    await autoFetchSelectedAccountMessages();
   } catch (error) {
     showError(error?.message || String(error));
     setStatus('切换失败', 'error');
@@ -450,6 +451,13 @@ async function runMessageFetch() {
     doneText: '已拉取',
     onSuccess: renderMessageResult,
   });
+}
+
+async function autoFetchSelectedAccountMessages() {
+  if (elements.fetchMessagesButton.disabled) {
+    return;
+  }
+  await runMessageFetch();
 }
 
 async function runRequest({ endpoint, busyText, doneText, onSuccess }) {

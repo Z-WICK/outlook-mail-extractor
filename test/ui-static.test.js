@@ -124,6 +124,14 @@ test('UI script clears selected browser credential state after deleting current 
   assert.match(script, /if \(selectedAccountId === id\) \{\s*clearSelectedCredentialState\(\);\s*\}/s);
 });
 
+test('UI script automatically fetches messages after selecting a browser account', () => {
+  const script = fs.readFileSync(path.join(publicDir, 'app.js'), 'utf8');
+
+  assert.match(script, /async function autoFetchSelectedAccountMessages\(\)/);
+  assert.match(script, /await autoFetchSelectedAccountMessages\(\)/);
+  assert.match(script, /await runMessageFetch\(\)/);
+});
+
 test('credential parser accepts pasted email password client token rows', () => {
   const { maskSecret, parseCredentialLine } = require('../public/app.js');
   const parsed = parseCredentialLine([
