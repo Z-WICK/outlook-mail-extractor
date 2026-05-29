@@ -110,7 +110,7 @@
     const fetchImpl = getFetchImpl(options.fetchImpl);
     const mailbox = normalizeMailboxLabel(options.mailbox);
     const top = Math.max(1, Math.min(Number(options.top) || 5, 30));
-    const url = `${GRAPH_API_BASE}/${normalizeMailboxId(mailbox)}/messages?$top=${encodeURIComponent(top)}&$select=id,internetMessageId,subject,from,bodyPreview,receivedDateTime,toRecipients,ccRecipients,bccRecipients&$orderby=receivedDateTime desc`;
+    const url = `${GRAPH_API_BASE}/${normalizeMailboxId(mailbox)}/messages?$top=${encodeURIComponent(top)}&$select=id,internetMessageId,subject,from,bodyPreview,body,receivedDateTime,toRecipients,ccRecipients,bccRecipients&$orderby=receivedDateTime desc`;
     const response = await fetchImpl(url, {
       method: 'GET',
       headers: {

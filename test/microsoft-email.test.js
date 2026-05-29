@@ -54,6 +54,44 @@ test('extracts the newest verification code that matches filters', () => {
   assert.equal(result.mailbox, 'Junk');
 });
 
+test('fetches Graph message body so OpenAI codes beyond bodyPreview can be extracted', async () => {
+  const calls = [];
+  const result = await microsoftEmail.fetchMicrosoftVerificationCode({
+    clientId: 'client-id',
+    refreshToken: 'refresh-1',
+    maxRetries: 1,
+    retryDelayMs: 0,
+    senderFilters: ['openai.com'],
+    subjectFilters: ['login'],
+    fetchImpl: async (url) => {
+      const requestedUrl = String(url);
+      calls.push(requestedUrl);
+      if (requestedUrl.includes('/oauth2/v2.0/token')) {
+        return jsonResponse({ access_token: 'access-1', refresh_token: 'refresh-2' });
+      }
+
+      const requestedBody = /\$select=[^&]*\bbody\b/i.test(requestedUrl);
+      return jsonResponse({
+        value: [{
+          id: 'openai-login',
+          subject: 'Your temporary OpenAI login code',
+          from: { emailAddress: { address: 'noreply@tm.openai.com' } },
+          bodyPreview: 'Enter this temporary verification code to continue:',
+          body: requestedBody
+            ? { content: 'Enter this temporary verification code to continue:\n\n\n924881\n\nBest,\nThe OpenAI team' }
+            : undefined,
+          receivedDateTime: '2026-05-29T04:16:50.000Z',
+        }],
+      });
+    },
+  });
+
+  assert.equal(result.code, '924881');
+  assert.equal(result.messageId, 'openai-login');
+  assert.equal(result.nextRefreshToken, 'refresh-2');
+  assert.equal(calls.some((url) => /\$select=[^&]*\bbody\b/i.test(url)), true);
+});
+
 test('falls back across Microsoft token and mailbox transports', async () => {
   const calls = [];
   const fetchImpl = async (url) => {
