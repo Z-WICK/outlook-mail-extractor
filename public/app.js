@@ -7,7 +7,6 @@ const elements = typeof document === 'undefined' ? null : {
   form: document.getElementById('extractorForm'),
   credentialRaw: document.getElementById('credentialRaw'),
   parseCredentialButton: document.getElementById('parseCredentialButton'),
-  parsedAccountSummary: document.getElementById('parsedAccountSummary'),
   accountSearch: document.getElementById('accountSearch'),
   accountList: document.getElementById('accountList'),
   accountCount: document.getElementById('accountCount'),
@@ -31,6 +30,7 @@ const elements = typeof document === 'undefined' ? null : {
   statusText: document.getElementById('statusText'),
   errorBox: document.getElementById('errorBox'),
   resultMeta: document.getElementById('resultMeta'),
+  activeAccountMeta: document.getElementById('activeAccountMeta'),
   codeTab: document.getElementById('codeTab'),
   messagesTab: document.getElementById('messagesTab'),
   codePanel: document.getElementById('codePanel'),
@@ -314,10 +314,6 @@ async function applyCredentialImport() {
     pendingCredential = primary;
     elements.clientId.value = primary.clientId;
     elements.refreshToken.value = primary.refreshToken;
-    elements.parsedAccountSummary.hidden = false;
-    elements.parsedAccountSummary.textContent = parsedAccounts.length === 1
-      ? `已解析 ${primary.email}，密码 ${maskSecret(primary.password)}，令牌 ${maskSecret(primary.refreshToken)}`
-      : `已解析 ${parsedAccounts.length} 个邮箱，当前预选 ${primary.email}`;
     clearError();
     setStatus(`保存中 0/${parsedAccounts.length}`, 'busy');
     if (elements.sessionMemory.checked) {
@@ -338,10 +334,7 @@ async function saveParsedCredentials(parsedAccounts) {
 
   const primary = savedAccounts[0];
   selectedAccountId = primary.id;
-  elements.parsedAccountSummary.hidden = false;
-  elements.parsedAccountSummary.textContent = savedAccounts.length === 1
-    ? `已保存 ${primary.email}，密码 ${primary.passwordMasked}，令牌 ${primary.refreshTokenMasked}`
-    : `已保存 ${savedAccounts.length} 个邮箱，当前选中 ${primary.email}`;
+  setActiveAccountMeta(primary.email);
   setStatus(savedAccounts.length === 1 ? '已保存' : `已保存 ${savedAccounts.length} 个`, 'done');
   clearError();
   await loadAccounts(elements.accountSearch.value);
@@ -419,8 +412,7 @@ async function selectAccount(id) {
     };
     elements.clientId.value = account.clientId || '';
     elements.refreshToken.value = account.refreshToken || '';
-    elements.parsedAccountSummary.hidden = false;
-    elements.parsedAccountSummary.textContent = `已切换 ${account.email}，密码 ${maskSecret(account.password)}，令牌 ${maskSecret(account.refreshToken)}`;
+    setActiveAccountMeta(account.email);
     setStatus('已切换', 'done');
     clearError();
     if (elements.sessionMemory.checked) {
@@ -545,8 +537,7 @@ function clearSelectedCredentialState() {
   pendingCredential = null;
   elements.clientId.value = '';
   elements.refreshToken.value = '';
-  elements.parsedAccountSummary.textContent = '';
-  elements.parsedAccountSummary.hidden = true;
+  setActiveAccountMeta('');
   if (elements.sessionMemory.checked) {
     persistSessionConfig();
   } else {
@@ -671,6 +662,12 @@ function setBusy(isBusy, text = '') {
 function setStatus(text, state = '') {
   elements.statusText.textContent = text;
   elements.statusText.className = `status-pill ${state}`.trim();
+}
+
+function setActiveAccountMeta(email) {
+  const value = String(email || '').trim();
+  elements.activeAccountMeta.textContent = value ? `正在使用 ${value}` : '';
+  elements.activeAccountMeta.hidden = !value;
 }
 
 function showError(message) {

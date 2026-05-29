@@ -132,6 +132,25 @@ test('UI script automatically fetches messages after selecting a browser account
   assert.match(script, /await runMessageFetch\(\)/);
 });
 
+test('UI shows the selected account in the result header instead of the import summary', () => {
+  const html = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
+  const script = fs.readFileSync(path.join(publicDir, 'app.js'), 'utf8');
+  const styles = fs.readFileSync(path.join(publicDir, 'styles.css'), 'utf8');
+
+  assert.match(html, /id="resultMeta"[\s\S]*id="activeAccountMeta"/);
+  assert.match(html, /data-testid="active-account-meta"/);
+  assert.match(script, /activeAccountMeta: document\.getElementById\('activeAccountMeta'\)/);
+  assert.match(script, /function setActiveAccountMeta\(email\)/);
+  assert.match(script, /setActiveAccountMeta\(primary\.email\)/);
+  assert.match(script, /setActiveAccountMeta\(account\.email\)/);
+  assert.match(script, /setActiveAccountMeta\(''\)/);
+  assert.match(script, /正在使用 \$\{value\}/);
+  assert.doesNotMatch(html, /parsedAccountSummary|parsed-account-summary|class="parsed-summary"/);
+  assert.doesNotMatch(script, /parsedAccountSummary/);
+  assert.doesNotMatch(styles, /\.parsed-summary/);
+  assert.match(styles, /\.active-account-meta/);
+});
+
 test('UI puts the settings trigger beside status and keeps mailbox selection inside settings dialog', () => {
   const html = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
   const script = fs.readFileSync(path.join(publicDir, 'app.js'), 'utf8');

@@ -59,7 +59,6 @@
                 </svg>
                 <span>解析并保存</span>
               </button>
-              <span class="parsed-summary" id="parsedAccountSummary" data-testid="parsed-account-summary" hidden></span>
             </div>
           </section>
 
@@ -170,9 +169,10 @@
 
       <section class="panel result-panel" aria-labelledby="resultTitle">
         <div class="result-header">
-          <div class="panel-title">
+          <div class="panel-title result-title">
             <h2 id="resultTitle">结果</h2>
             <span id="resultMeta">等待请求</span>
+            <span class="active-account-meta" id="activeAccountMeta" data-testid="active-account-meta" hidden></span>
           </div>
           <div class="tabs" data-testid="result-tabs" role="tablist" aria-label="结果视图">
             <button class="tab active" id="codeTab" type="button" role="tab" aria-controls="codePanel" aria-selected="true">验证码</button>
