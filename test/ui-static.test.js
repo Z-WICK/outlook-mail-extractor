@@ -257,6 +257,27 @@ test('UI puts the settings trigger beside status and keeps mailbox selection ins
   assert.match(styles, /\.settings-panel/);
 });
 
+test('UI uses a polished Outlook inspired visual system', () => {
+  const html = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
+  const styles = fs.readFileSync(path.join(publicDir, 'styles.css'), 'utf8');
+
+  assert.match(html, /class="brand-mark"[\s\S]*<svg viewBox="0 0 24 24" role="img"/);
+  assert.match(styles, /--primary:\s*#0078d4/);
+  assert.match(styles, /--primary-strong:\s*#005a9e/);
+  assert.match(styles, /--bg:\s*#f3f6fb/);
+  assert.match(styles, /--surface:\s*#ffffff/);
+  assert.match(styles, /--outlook-rail:\s*#eff6fc/);
+  assert.match(styles, /\.topbar\s*\{[^}]*background:\s*rgba\(255,\s*255,\s*255,\s*0\.86\)/s);
+  assert.match(styles, /\.brand-mark\s*\{[^}]*background:\s*linear-gradient\(135deg,\s*#0078d4,\s*#0f6cbd\)/s);
+  assert.match(styles, /\.panel\s*\{[^}]*border:\s*1px solid var\(--border\)[^}]*box-shadow:\s*var\(--shadow\)/s);
+  assert.match(styles, /\.import-box,\s*\.account-pool-entry\s*\{[^}]*background:\s*linear-gradient\(180deg,\s*#ffffff,\s*var\(--outlook-rail\)\)/s);
+  assert.match(styles, /textarea\s*\{[^}]*background:\s*#ffffff[^}]*box-shadow:\s*inset 0 1px 2px rgba\(0,\s*0,\s*0,\s*0\.04\)/s);
+  assert.match(styles, /\.result-header\s*\{[^}]*background:\s*linear-gradient\(180deg,\s*#ffffff,\s*#f7fbff\)/s);
+  assert.match(styles, /\.code-line\s*\{[^}]*background:\s*linear-gradient\(180deg,\s*#eef7ff,\s*#ffffff\)/s);
+  assert.match(styles, /\.message-card\s*\{[^}]*border-left:\s*3px solid var\(--primary\)/s);
+  assert.match(styles, /\.message-card h3\s*\{[^}]*color:\s*#102a43/s);
+});
+
 test('credential parser accepts pasted email password client token rows', () => {
   const { maskSecret, parseCredentialLine } = require('../public/app.js');
   const parsed = parseCredentialLine([

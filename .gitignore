@@ -4,3 +4,4 @@ node_modules/
 .DS_Store
 outlook-mail-extractor-*.tgz
 docs/superpowers/
+.superpowers/

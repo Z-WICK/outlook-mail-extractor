@@ -1,17 +1,21 @@
 :root {
-  --bg: #f5f7fb;
+  --bg: #f3f6fb;
+  --surface: #ffffff;
   --panel: #ffffff;
-  --text: #111827;
-  --muted: #64748b;
-  --border: #d8dee9;
-  --soft: #eef2f7;
-  --primary: #2563eb;
-  --primary-strong: #1d4ed8;
-  --success: #16a34a;
-  --danger: #b91c1c;
-  --warning: #b45309;
-  --focus: rgba(37, 99, 235, 0.28);
-  --shadow: 0 18px 50px rgba(15, 23, 42, 0.09);
+  --text: #102a43;
+  --muted: #5f6b7a;
+  --border: #d7e3ef;
+  --soft: #edf6fd;
+  --outlook-rail: #eff6fc;
+  --primary: #0078d4;
+  --primary-strong: #005a9e;
+  --primary-soft: #e5f3ff;
+  --success: #107c10;
+  --danger: #a4262c;
+  --warning: #986f0b;
+  --focus: rgba(0, 120, 212, 0.24);
+  --shadow: 0 18px 44px rgba(32, 55, 88, 0.12);
+  --shadow-soft: 0 8px 24px rgba(32, 55, 88, 0.08);
 }
 
 * {
@@ -26,8 +30,7 @@ body {
   min-width: 320px;
   margin: 0;
   background:
-    linear-gradient(135deg, rgba(37, 99, 235, 0.08), transparent 34%),
-    linear-gradient(315deg, rgba(22, 163, 74, 0.08), transparent 28%),
+    linear-gradient(180deg, #e8f4ff 0, #f3f6fb 280px),
     var(--bg);
   color: var(--text);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -47,7 +50,7 @@ button {
 .app-shell {
   width: min(1440px, 100%);
   margin: 0 auto;
-  padding: 24px;
+  padding: 20px 24px 28px;
 }
 
 .topbar {
@@ -55,7 +58,13 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding: 18px 0 22px;
+  border: 1px solid rgba(215, 227, 239, 0.82);
+  border-radius: 8px;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(14px);
 }
 
 .topbar-actions {
@@ -79,10 +88,11 @@ button {
   width: 48px;
   height: 48px;
   flex: 0 0 auto;
-  border: 1px solid rgba(37, 99, 235, 0.24);
+  border: 1px solid rgba(0, 120, 212, 0.24);
   border-radius: 8px;
-  background: #eaf1ff;
-  color: var(--primary);
+  background: linear-gradient(135deg, #0078d4, #0f6cbd);
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(0, 120, 212, 0.25);
 }
 
 .brand-mark svg,
@@ -108,6 +118,8 @@ p {
 h1 {
   font-size: clamp(1.35rem, 2.2vw, 2rem);
   line-height: 1.15;
+  color: #102a43;
+  letter-spacing: 0;
 }
 
 .brand p,
@@ -123,10 +135,10 @@ h1 {
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 8px 14px;
-  background: var(--panel);
+  background: var(--surface);
   color: var(--muted);
   text-align: center;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 8px 20px rgba(32, 55, 88, 0.06);
 }
 
 .status-pill.busy {
@@ -144,7 +156,7 @@ h1 {
 .workspace {
   display: grid;
   grid-template-columns: minmax(360px, 460px) minmax(0, 1fr);
-  gap: 20px;
+  gap: 18px;
   align-items: start;
 }
 
@@ -155,13 +167,14 @@ h1 {
 .panel {
   border: 1px solid var(--border);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.94);
+  background: var(--surface);
   box-shadow: var(--shadow);
+  overflow: hidden;
 }
 
 .config-panel,
 .result-panel {
-  padding: 20px;
+  padding: 18px;
 }
 
 .result-panel {
@@ -204,11 +217,11 @@ h1 {
   align-items: center;
   gap: 6px;
   min-height: 28px;
-  border: 1px solid #dbe5f2;
+  border: 1px solid #cfe4f7;
   border-radius: 999px;
   padding: 3px 10px;
-  background: #f8fbff;
-  color: #526683;
+  background: #f7fbff;
+  color: #315c7d;
   font-size: 0.82rem;
   font-weight: 700;
   line-height: 1.3;
@@ -220,8 +233,8 @@ h1 {
   height: 6px;
   flex: 0 0 auto;
   border-radius: 999px;
-  background: #7c95b8;
-  box-shadow: 0 0 0 3px rgba(124, 149, 184, 0.12);
+  background: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.12);
   content: "";
 }
 
@@ -253,15 +266,16 @@ h1 {
 
 .import-box,
 .account-pool-entry {
-  border: 1px solid #c7d7f4;
+  border: 1px solid #c7ddec;
   border-radius: 8px;
   margin-bottom: 16px;
   padding: 14px;
-  background: #f3f7ff;
+  background: linear-gradient(180deg, #ffffff, var(--outlook-rail));
+  box-shadow: 0 8px 22px rgba(32, 55, 88, 0.06);
 }
 
 .account-pool-entry {
-  background: #fbfdff;
+  background: linear-gradient(180deg, #ffffff, #f7fbff);
 }
 
 .account-pool-trigger {
@@ -309,8 +323,8 @@ h1 {
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 18px;
-  background: #ffffff;
-  box-shadow: 0 22px 70px rgba(15, 23, 42, 0.22);
+  background: var(--surface);
+  box-shadow: 0 22px 70px rgba(32, 55, 88, 0.22);
 }
 
 .account-pool-search {
@@ -328,7 +342,7 @@ h1 {
 
 .account-empty {
   grid-column: 1 / -1;
-  border: 1px dashed #c7d0dd;
+  border: 1px dashed #b9d4e8;
   border-radius: 8px;
   padding: 12px;
   color: var(--muted);
@@ -345,12 +359,13 @@ h1 {
   min-width: 0;
   min-height: 112px;
   padding: 9px;
-  background: #ffffff;
+  background: var(--surface);
+  box-shadow: 0 5px 16px rgba(32, 55, 88, 0.05);
 }
 
 .account-item.active {
-  border-color: rgba(37, 99, 235, 0.52);
-  background: #eef5ff;
+  border-color: rgba(0, 120, 212, 0.52);
+  background: var(--primary-soft);
 }
 
 .account-select,
@@ -397,7 +412,7 @@ h1 {
 }
 
 .account-select:hover {
-  background: var(--soft);
+  background: #f3f9ff;
 }
 
 .account-delete {
@@ -409,12 +424,12 @@ h1 {
 }
 
 .account-delete:hover {
-  background: #fff1f2;
+  background: #fde7e9;
 }
 
 .field span,
 .mailboxes legend {
-  color: #334155;
+  color: #304b63;
   font-size: 0.88rem;
   font-weight: 650;
 }
@@ -428,9 +443,10 @@ textarea {
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 10px 12px;
-  background: #fbfdff;
+  background: #ffffff;
   color: var(--text);
   outline: none;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
   transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 
@@ -439,6 +455,8 @@ textarea {
   resize: vertical;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size: 0.86rem;
+  background: #ffffff;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 input:focus,
@@ -456,6 +474,7 @@ button:focus-visible {
   border-radius: 8px;
   margin: 2px 0 14px;
   padding: 12px;
+  background: #f8fbff;
 }
 
 .mailboxes legend {
@@ -472,7 +491,7 @@ button:focus-visible {
 
 .checkline {
   margin: 0 0 16px;
-  color: #334155;
+  color: #304b63;
 }
 
 .check-option input,
@@ -493,7 +512,7 @@ button:focus-visible {
 .tab {
   border: 1px solid transparent;
   border-radius: 8px;
-  transition: background 180ms ease, color 180ms ease, border-color 180ms ease, transform 180ms ease;
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
 
 .button {
@@ -509,21 +528,23 @@ button:focus-visible {
 .button.primary {
   background: var(--primary);
   color: #ffffff;
+  box-shadow: 0 10px 24px rgba(0, 120, 212, 0.20);
 }
 
 .button.primary:hover {
   background: var(--primary-strong);
+  box-shadow: 0 12px 28px rgba(0, 90, 158, 0.24);
 }
 
 .button.secondary {
   border-color: var(--border);
-  background: var(--soft);
-  color: #1f2937;
+  background: #f8fbff;
+  color: #28445c;
 }
 
 .button.secondary:hover {
-  border-color: #b8c2d2;
-  background: #e6ebf3;
+  border-color: #b8d5ea;
+  background: var(--soft);
 }
 
 .button:disabled {
@@ -540,10 +561,10 @@ button:focus-visible {
 
 .error-box {
   margin-top: 14px;
-  border: 1px solid rgba(185, 28, 28, 0.24);
+  border: 1px solid rgba(164, 38, 44, 0.24);
   border-radius: 8px;
   padding: 12px;
-  background: #fff1f2;
+  background: #fde7e9;
   color: var(--danger);
 }
 
@@ -553,7 +574,9 @@ button:focus-visible {
   gap: 14px;
   align-items: center;
   border-bottom: 1px solid var(--border);
-  padding-bottom: 14px;
+  margin: -18px -18px 0;
+  padding: 16px 18px;
+  background: linear-gradient(180deg, #ffffff, #f7fbff);
 }
 
 .tabs {
@@ -562,7 +585,7 @@ button:focus-visible {
   border: 1px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
-  background: var(--soft);
+  background: #edf6fd;
 }
 
 .tab {
@@ -576,6 +599,7 @@ button:focus-visible {
 .tab.active {
   background: #ffffff;
   color: var(--primary);
+  box-shadow: inset 0 -2px 0 var(--primary);
 }
 
 .result-body {
@@ -588,16 +612,16 @@ button:focus-visible {
   place-items: center;
   gap: 12px;
   min-height: 420px;
-  border: 1px dashed #c7d0dd;
+  border: 1px dashed #b9d4e8;
   border-radius: 8px;
-  background: #fbfdff;
+  background: #f8fbff;
   text-align: center;
 }
 
 .empty-state svg {
   width: 42px;
   height: 42px;
-  color: #94a3b8;
+  color: #7aa7c7;
 }
 
 .code-result {
@@ -610,10 +634,11 @@ button:focus-visible {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  border: 1px solid #bcd2ff;
+  border: 1px solid #b9dcf4;
   border-radius: 8px;
   padding: 18px;
-  background: #eef5ff;
+  background: linear-gradient(180deg, #eef7ff, #ffffff);
+  box-shadow: 0 12px 28px rgba(0, 120, 212, 0.10);
 }
 
 #codeValue {
@@ -621,7 +646,7 @@ button:focus-visible {
   font-size: clamp(2rem, 5vw, 4rem);
   font-weight: 800;
   letter-spacing: 0;
-  color: #0f3c91;
+  color: #005a9e;
   overflow-wrap: anywhere;
 }
 
@@ -630,12 +655,14 @@ button:focus-visible {
   place-items: center;
   min-width: 44px;
   min-height: 44px;
+  border-color: var(--border);
   background: #ffffff;
   color: var(--primary);
 }
 
 .icon-button:hover {
-  background: #e0ebff;
+  border-color: #b8d5ea;
+  background: var(--primary-soft);
 }
 
 .settings-toggle {
@@ -643,12 +670,12 @@ button:focus-visible {
   justify-self: end;
   border-color: var(--border);
   background: #ffffff;
-  color: #334155;
+  color: #304b63;
 }
 
 .settings-toggle:hover {
-  border-color: #b8c2d2;
-  background: var(--soft);
+  border-color: #b8d5ea;
+  background: var(--primary-soft);
 }
 
 .settings-overlay {
@@ -658,7 +685,7 @@ button:focus-visible {
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgba(15, 23, 42, 0.42);
+  background: rgba(16, 42, 67, 0.42);
 }
 
 .settings-panel {
@@ -669,7 +696,7 @@ button:focus-visible {
   border-radius: 8px;
   padding: 18px;
   background: #ffffff;
-  box-shadow: 0 22px 70px rgba(15, 23, 42, 0.22);
+  box-shadow: 0 22px 70px rgba(32, 55, 88, 0.22);
 }
 
 .settings-header {
@@ -680,6 +707,7 @@ button:focus-visible {
   margin-bottom: 16px;
   border-bottom: 1px solid var(--border);
   padding-bottom: 12px;
+  background: linear-gradient(180deg, #ffffff, #f7fbff);
 }
 
 .settings-header h3 {
@@ -697,11 +725,11 @@ button:focus-visible {
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 12px;
-  background: #fbfdff;
+  background: #f8fbff;
 }
 
 .meta-grid dt {
-  color: #334155;
+  color: #304b63;
   font-size: 0.78rem;
   font-weight: 750;
 }
@@ -718,8 +746,8 @@ button:focus-visible {
   border-radius: 8px;
   margin: 0;
   padding: 14px;
-  background: #101827;
-  color: #d7e7ff;
+  background: #0b1f33;
+  color: #d6ecff;
   font-size: 0.86rem;
   line-height: 1.55;
 }
@@ -733,15 +761,18 @@ button:focus-visible {
 .message-card {
   min-width: 0;
   border: 1px solid var(--border);
+  border-left: 3px solid var(--primary);
   border-radius: 8px;
   padding: 14px;
-  background: #fbfdff;
+  background: #ffffff;
   overflow: hidden;
   overflow-wrap: anywhere;
+  box-shadow: 0 8px 20px rgba(32, 55, 88, 0.07);
 }
 
 .message-card h3 {
   margin: 0 0 8px;
+  color: #102a43;
   font-size: 0.98rem;
   overflow-wrap: anywhere;
 }
@@ -760,7 +791,7 @@ button:focus-visible {
 
 .message-id {
   margin-top: 8px;
-  color: #526683;
+  color: #526f86;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size: 0.8rem;
   line-height: 1.45;
@@ -770,7 +801,7 @@ button:focus-visible {
 
 .message-preview {
   margin-top: 10px;
-  color: #334155;
+  color: #304b63;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
@@ -798,7 +829,7 @@ button:focus-visible {
 
 .message-page-info {
   min-width: 92px;
-  color: #526683;
+  color: #315c7d;
   font-size: 0.88rem;
   font-weight: 700;
   text-align: center;
