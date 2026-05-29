@@ -26,6 +26,14 @@ test('UI entry wires app assets and key controls', () => {
   assert.match(html, /data-testid="result-tabs"/);
 });
 
+test('UI omits auxiliary console and local request labels', () => {
+  const html = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
+
+  assert.doesNotMatch(html, /本地邮件提取控制台/);
+  assert.doesNotMatch(html, /请求配置/);
+  assert.doesNotMatch(html, /127\.0\.0\.1/);
+});
+
 test('UI script uses browser-local accounts and only talks to mail JSON API endpoints', () => {
   const script = fs.readFileSync(path.join(publicDir, 'app.js'), 'utf8');
 
