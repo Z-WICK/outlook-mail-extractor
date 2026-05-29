@@ -145,7 +145,8 @@ test('UI shows the selected account in the result header instead of the import s
   const script = fs.readFileSync(path.join(publicDir, 'app.js'), 'utf8');
   const styles = fs.readFileSync(path.join(publicDir, 'styles.css'), 'utf8');
 
-  assert.match(html, /id="resultMeta"[\s\S]*id="activeAccountMeta"/);
+  assert.match(html, /class="result-title"[\s\S]*class="result-title-row"[\s\S]*id="resultMeta"[\s\S]*id="activeAccountMeta"/);
+  assert.match(html, /class="result-state"[^>]*id="resultMeta"/);
   assert.match(html, /data-testid="active-account-meta"/);
   assert.match(script, /activeAccountMeta: document\.getElementById\('activeAccountMeta'\)/);
   assert.match(script, /function setActiveAccountMeta\(email\)/);
@@ -157,6 +158,9 @@ test('UI shows the selected account in the result header instead of the import s
   assert.doesNotMatch(script, /parsedAccountSummary/);
   assert.doesNotMatch(styles, /\.parsed-summary/);
   assert.match(styles, /\.active-account-meta/);
+  assert.match(styles, /\.result-title-row/);
+  assert.match(styles, /\.result-state/);
+  assert.match(styles, /\.result-state::before/);
 });
 
 test('UI puts the settings trigger beside status and keeps mailbox selection inside settings dialog', () => {
