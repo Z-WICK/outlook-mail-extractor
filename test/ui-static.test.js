@@ -331,3 +331,15 @@ test('mail list styles hide empty states and wrap long message content', () => {
   assert.match(styles, /\.message-preview\s*\{[^}]*overflow-wrap:\s*anywhere/s);
   assert.match(script, /className = 'message-id'/);
 });
+
+test('code result omits raw message json debug output', () => {
+  const html = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
+  const script = fs.readFileSync(path.join(publicDir, 'app.js'), 'utf8');
+  const styles = fs.readFileSync(path.join(publicDir, 'styles.css'), 'utf8');
+
+  assert.doesNotMatch(html, /id="codeJson"/);
+  assert.doesNotMatch(html, /class="json-view"/);
+  assert.doesNotMatch(script, /codeJson/);
+  assert.doesNotMatch(script, /JSON\.stringify\(data\.message/);
+  assert.doesNotMatch(styles, /\.json-view/);
+});

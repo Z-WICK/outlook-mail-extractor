@@ -47,7 +47,6 @@ const elements = typeof document === 'undefined' ? null : {
   codeValue: document.getElementById('codeValue'),
   copyCodeButton: document.getElementById('copyCodeButton'),
   codeMeta: document.getElementById('codeMeta'),
-  codeJson: document.getElementById('codeJson'),
   messagesEmpty: document.getElementById('messagesEmpty'),
   messageList: document.getElementById('messageList'),
   messagePagination: document.getElementById('messagePagination'),
@@ -600,7 +599,6 @@ function renderCodeResult(data) {
     metaItem('消息 ID', data.messageId || '-'),
     metaItem('Refresh Token', data.nextRefreshToken ? '已返回新 token' : '未返回')
   );
-  elements.codeJson.textContent = JSON.stringify(data.message || {}, null, 2);
   elements.resultMeta.textContent = data.code ? `验证码 ${data.code}` : '未找到验证码';
 }
 
