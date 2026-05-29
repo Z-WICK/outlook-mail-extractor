@@ -140,6 +140,28 @@ test('UI script automatically fetches messages after selecting a browser account
   assert.match(script, /await runMessageFetch\(\)/);
 });
 
+test('UI moves browser account pool into a dense modal grid', () => {
+  const html = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
+  const script = fs.readFileSync(path.join(publicDir, 'app.js'), 'utf8');
+  const styles = fs.readFileSync(path.join(publicDir, 'styles.css'), 'utf8');
+
+  assert.match(html, /id="accountPoolToggle"[^>]*data-testid="account-pool-toggle"/);
+  assert.match(html, /id="accountPoolDialog"[^>]*data-testid="account-pool-dialog"[^>]*role="dialog"[^>]*hidden/);
+  assert.match(html, /id="accountPoolPanel"/);
+  assert.match(html, /id="accountPoolClose"[^>]*aria-label="关闭邮箱池"/);
+  assert.match(html, /id="accountPoolDialog"[\s\S]*id="accountSearch"[\s\S]*id="accountList"[\s\S]*<\/div>\s*<\/div>\s*<input id="clientId"/);
+  assert.doesNotMatch(html, /<section class="account-pool"/);
+  assert.match(script, /accountPoolToggle: document\.getElementById\('accountPoolToggle'\)/);
+  assert.match(script, /function openAccountPoolDialog\(\)/);
+  assert.match(script, /function closeAccountPoolDialog\(\)/);
+  assert.match(script, /elements\.accountPoolToggle\.addEventListener\('click', \(\) => openAccountPoolDialog\(\)\)/);
+  assert.match(script, /event\.key === 'Escape' && !elements\.accountPoolDialog\.hidden/);
+  assert.match(styles, /\.account-pool-overlay/);
+  assert.match(styles, /\.account-pool-panel/);
+  assert.match(styles, /\.account-list\s*\{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/s);
+  assert.match(styles, /@media \(max-width: 720px\)[\s\S]*\.account-list\s*\{[^}]*grid-template-columns:\s*1fr/s);
+});
+
 test('UI shows the selected account in the result header instead of the import summary', () => {
   const html = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
   const script = fs.readFileSync(path.join(publicDir, 'app.js'), 'utf8');

@@ -252,7 +252,7 @@ h1 {
 }
 
 .import-box,
-.account-pool {
+.account-pool-entry {
   border: 1px solid #c7d7f4;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -260,8 +260,12 @@ h1 {
   background: #f3f7ff;
 }
 
-.account-pool {
+.account-pool-entry {
   background: #fbfdff;
+}
+
+.account-pool-trigger {
+  width: 100%;
 }
 
 .import-title {
@@ -287,14 +291,43 @@ h1 {
   gap: 12px;
 }
 
+.account-pool-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.42);
+}
+
+.account-pool-panel {
+  display: grid;
+  width: min(940px, 100%);
+  max-height: min(760px, calc(100vh - 48px));
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px;
+  background: #ffffff;
+  box-shadow: 0 22px 70px rgba(15, 23, 42, 0.22);
+}
+
+.account-pool-search {
+  margin-bottom: 12px;
+}
+
 .account-list {
   display: grid;
-  max-height: 230px;
-  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-height: min(356px, calc(100vh - 280px));
+  gap: 10px;
   overflow: auto;
+  padding-right: 2px;
 }
 
 .account-empty {
+  grid-column: 1 / -1;
   border: 1px dashed #c7d0dd;
   border-radius: 8px;
   padding: 12px;
@@ -305,11 +338,13 @@ h1 {
 .account-item {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 8px;
-  align-items: stretch;
+  gap: 6px;
+  align-items: start;
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 8px;
+  min-width: 0;
+  min-height: 112px;
+  padding: 9px;
   background: #ffffff;
 }
 
@@ -329,8 +364,10 @@ h1 {
 .account-select {
   display: grid;
   min-width: 0;
-  gap: 2px;
-  padding: 7px 9px;
+  align-content: start;
+  gap: 4px;
+  min-height: 88px;
+  padding: 5px 6px;
   text-align: left;
 }
 
@@ -340,9 +377,23 @@ h1 {
   overflow-wrap: anywhere;
 }
 
+.account-select strong {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
 .account-select span {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
+  line-height: 1.35;
 }
 
 .account-select:hover {
@@ -350,8 +401,11 @@ h1 {
 }
 
 .account-delete {
-  padding: 0 10px;
+  justify-self: end;
+  min-height: 32px;
+  padding: 0 8px;
   color: var(--danger);
+  font-size: 0.82rem;
 }
 
 .account-delete:hover {
@@ -788,8 +842,22 @@ button:focus-visible {
     max-height: calc(100vh - 24px);
   }
 
-  .account-item {
+  .account-pool-overlay {
+    align-items: end;
+    padding: 12px;
+  }
+
+  .account-pool-panel {
+    max-height: calc(100vh - 24px);
+  }
+
+  .account-list {
     grid-template-columns: 1fr;
+    max-height: calc(100vh - 250px);
+  }
+
+  .account-item {
+    min-height: auto;
   }
 
   .tabs,

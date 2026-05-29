@@ -7,6 +7,10 @@ const elements = typeof document === 'undefined' ? null : {
   form: document.getElementById('extractorForm'),
   credentialRaw: document.getElementById('credentialRaw'),
   parseCredentialButton: document.getElementById('parseCredentialButton'),
+  accountPoolToggle: document.getElementById('accountPoolToggle'),
+  accountPoolDialog: document.getElementById('accountPoolDialog'),
+  accountPoolPanel: document.getElementById('accountPoolPanel'),
+  accountPoolClose: document.getElementById('accountPoolClose'),
   accountSearch: document.getElementById('accountSearch'),
   accountList: document.getElementById('accountList'),
   accountCount: document.getElementById('accountCount'),
@@ -53,6 +57,13 @@ function init() {
   restoreSessionConfig();
   loadAccounts();
   elements.parseCredentialButton.addEventListener('click', () => applyCredentialImport());
+  elements.accountPoolToggle.addEventListener('click', () => openAccountPoolDialog());
+  elements.accountPoolClose.addEventListener('click', () => closeAccountPoolDialog());
+  elements.accountPoolDialog.addEventListener('click', (event) => {
+    if (event.target === elements.accountPoolDialog) {
+      closeAccountPoolDialog();
+    }
+  });
   elements.accountSearch.addEventListener('input', () => loadAccounts(elements.accountSearch.value));
   elements.credentialRaw.addEventListener('keydown', (event) => {
     if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
@@ -70,6 +81,10 @@ function init() {
     }
   });
   document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !elements.accountPoolDialog.hidden) {
+      closeAccountPoolDialog();
+      return;
+    }
     if (event.key === 'Escape' && !elements.settingsDialog.hidden) {
       closeSettingsDialog();
     }
@@ -419,6 +434,7 @@ async function selectAccount(id) {
       persistSessionConfig();
     }
     await loadAccounts(elements.accountSearch.value);
+    closeAccountPoolDialog();
     await autoFetchSelectedAccountMessages();
   } catch (error) {
     showError(error?.message || String(error));
@@ -690,6 +706,18 @@ function closeSettingsDialog() {
   elements.settingsDialog.hidden = true;
   elements.settingsToggle.setAttribute('aria-expanded', 'false');
   elements.settingsToggle.focus();
+}
+
+function openAccountPoolDialog() {
+  elements.accountPoolDialog.hidden = false;
+  elements.accountPoolToggle.setAttribute('aria-expanded', 'true');
+  elements.accountSearch.focus();
+}
+
+function closeAccountPoolDialog() {
+  elements.accountPoolDialog.hidden = true;
+  elements.accountPoolToggle.setAttribute('aria-expanded', 'false');
+  elements.accountPoolToggle.focus();
 }
 
 function persistSessionConfig() {
