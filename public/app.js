@@ -1,6 +1,6 @@
 const SESSION_KEY = 'outlook-mail-extractor-ui';
 const ACCOUNT_STORAGE_KEY = 'outlook-mail-extractor-accounts-v1';
-const MESSAGE_PAGE_SIZE = 6;
+const MESSAGE_PAGE_SIZE = 1;
 let pendingCredential = null;
 let selectedAccountId = '';
 let currentMessages = [];
@@ -613,7 +613,7 @@ function renderMessageResult(data) {
       .map((message) => ({ ...message, mailbox: message.mailbox || mailboxName }));
   });
 
-  currentMessages = messages;
+  currentMessages = sortMessagesByNewest(messages);
   currentMessagePage = 1;
   renderMessagePage();
   elements.resultMeta.textContent = `${messages.length} 封邮件`;
@@ -652,6 +652,25 @@ function getMessagePageState(messages, page = 1, pageSize = MESSAGE_PAGE_SIZE) {
     totalPages,
     visibleMessages,
   };
+}
+
+function sortMessagesByNewest(messages) {
+  return (Array.isArray(messages) ? messages : [])
+    .map((message, index) => ({ message, index }))
+    .sort((left, right) => {
+      const leftTime = getMessageTimestamp(left.message);
+      const rightTime = getMessageTimestamp(right.message);
+      if (rightTime !== leftTime) {
+        return rightTime - leftTime;
+      }
+      return left.index - right.index;
+    })
+    .map(({ message }) => message);
+}
+
+function getMessageTimestamp(message = {}) {
+  const timestamp = Date.parse(message.receivedDateTime || message.createdDateTime || '');
+  return Number.isNaN(timestamp) ? 0 : timestamp;
 }
 
 function renderMessageCard(message) {
@@ -817,6 +836,7 @@ if (typeof module !== 'undefined' && module.exports) {
     searchStoredAccounts,
     selectCredentialDataLine,
     selectCredentialDataLines,
+    sortMessagesByNewest,
     updateStoredAccountRefreshToken,
     upsertStoredAccounts,
   };

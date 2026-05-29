@@ -140,37 +140,51 @@ test('UI script automatically fetches messages after selecting a browser account
   assert.match(script, /await runMessageFetch\(\)/);
 });
 
-test('mail list pagination controls slice and navigate imported messages', () => {
+test('mail list pagination shows one newest message per page by default', () => {
   const html = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
   const script = fs.readFileSync(path.join(publicDir, 'app.js'), 'utf8');
   const styles = fs.readFileSync(path.join(publicDir, 'styles.css'), 'utf8');
-  const { getMessagePageState } = require('../public/app.js');
+  const { getMessagePageState, sortMessagesByNewest } = require('../public/app.js');
 
   assert.match(html, /id="messagePagination"[^>]*data-testid="message-pagination"[^>]*hidden/);
   assert.match(html, /id="messagePrevPage"/);
   assert.match(html, /id="messagePageInfo"/);
   assert.match(html, /id="messageNextPage"/);
-  assert.match(script, /const MESSAGE_PAGE_SIZE = 6/);
+  assert.match(script, /const MESSAGE_PAGE_SIZE = 1/);
   assert.match(script, /let currentMessages = \[\]/);
   assert.match(script, /let currentMessagePage = 1/);
   assert.match(script, /function renderMessagePage\(\)/);
-  assert.match(script, /currentMessages = messages/);
+  assert.match(script, /currentMessages = sortMessagesByNewest\(messages\)/);
   assert.match(script, /currentMessagePage = 1/);
   assert.match(script, /visibleMessages\.map\(renderMessageCard\)/);
   assert.match(script, /elements\.messagePrevPage\.disabled = !pageState\.hasPreviousPage/);
   assert.match(script, /elements\.messageNextPage\.disabled = !pageState\.hasNextPage/);
   assert.match(styles, /\.message-pagination/);
 
-  const messages = Array.from({ length: 14 }, (_, index) => ({ id: String(index + 1) }));
-  const secondPage = getMessagePageState(messages, 2, 6);
-  assert.deepEqual(secondPage.visibleMessages.map((message) => message.id), ['7', '8', '9', '10', '11', '12']);
+  const messages = [
+    { id: 'old', receivedDateTime: '2026-05-29T08:00:00.000Z' },
+    { id: 'newest', receivedDateTime: '2026-05-29T10:00:00.000Z' },
+    { id: 'middle', receivedDateTime: '2026-05-29T09:00:00.000Z' },
+  ];
+  const sortedMessages = sortMessagesByNewest(messages);
+  assert.deepEqual(sortedMessages.map((message) => message.id), ['newest', 'middle', 'old']);
+
+  const firstPage = getMessagePageState(sortedMessages, 1, 1);
+  assert.deepEqual(firstPage.visibleMessages.map((message) => message.id), ['newest']);
+  assert.equal(firstPage.currentPage, 1);
+  assert.equal(firstPage.totalPages, 3);
+  assert.equal(firstPage.hasPreviousPage, false);
+  assert.equal(firstPage.hasNextPage, true);
+
+  const secondPage = getMessagePageState(sortedMessages, 2, 1);
+  assert.deepEqual(secondPage.visibleMessages.map((message) => message.id), ['middle']);
   assert.equal(secondPage.currentPage, 2);
   assert.equal(secondPage.totalPages, 3);
   assert.equal(secondPage.hasPreviousPage, true);
   assert.equal(secondPage.hasNextPage, true);
 
-  const clampedPage = getMessagePageState(messages, 99, 6);
-  assert.deepEqual(clampedPage.visibleMessages.map((message) => message.id), ['13', '14']);
+  const clampedPage = getMessagePageState(sortedMessages, 99, 1);
+  assert.deepEqual(clampedPage.visibleMessages.map((message) => message.id), ['old']);
   assert.equal(clampedPage.currentPage, 3);
   assert.equal(clampedPage.hasNextPage, false);
 });
