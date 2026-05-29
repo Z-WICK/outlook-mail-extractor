@@ -11,6 +11,10 @@ const elements = typeof document === 'undefined' ? null : {
   accountSearch: document.getElementById('accountSearch'),
   accountList: document.getElementById('accountList'),
   accountCount: document.getElementById('accountCount'),
+  settingsToggle: document.getElementById('settingsToggle'),
+  settingsDialog: document.getElementById('settingsDialog'),
+  settingsPanel: document.getElementById('settingsPanel'),
+  settingsClose: document.getElementById('settingsClose'),
   clientId: document.getElementById('clientId'),
   refreshToken: document.getElementById('refreshToken'),
   senderFilters: document.getElementById('senderFilters'),
@@ -58,6 +62,18 @@ function init() {
   });
   elements.extractCodeButton.addEventListener('click', () => runCodeExtraction());
   elements.fetchMessagesButton.addEventListener('click', () => runMessageFetch());
+  elements.settingsToggle.addEventListener('click', () => openSettingsDialog());
+  elements.settingsClose.addEventListener('click', () => closeSettingsDialog());
+  elements.settingsDialog.addEventListener('click', (event) => {
+    if (event.target === elements.settingsDialog) {
+      closeSettingsDialog();
+    }
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !elements.settingsDialog.hidden) {
+      closeSettingsDialog();
+    }
+  });
   elements.copyCodeButton.addEventListener('click', () => copyCurrentCode());
   elements.codeTab.addEventListener('click', () => activateTab('code'));
   elements.messagesTab.addEventListener('click', () => activateTab('messages'));
@@ -665,6 +681,18 @@ function showError(message) {
 function clearError() {
   elements.errorBox.textContent = '';
   elements.errorBox.hidden = true;
+}
+
+function openSettingsDialog() {
+  elements.settingsDialog.hidden = false;
+  elements.settingsToggle.setAttribute('aria-expanded', 'true');
+  elements.settingsClose.focus();
+}
+
+function closeSettingsDialog() {
+  elements.settingsDialog.hidden = true;
+  elements.settingsToggle.setAttribute('aria-expanded', 'false');
+  elements.settingsToggle.focus();
 }
 
 function persistSessionConfig() {

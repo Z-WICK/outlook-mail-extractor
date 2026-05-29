@@ -132,6 +132,27 @@ test('UI script automatically fetches messages after selecting a browser account
   assert.match(script, /await runMessageFetch\(\)/);
 });
 
+test('UI keeps mailbox selection under account pool and moves advanced options into settings dialog', () => {
+  const html = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
+  const script = fs.readFileSync(path.join(publicDir, 'app.js'), 'utf8');
+  const styles = fs.readFileSync(path.join(publicDir, 'styles.css'), 'utf8');
+
+  assert.match(html, /data-testid="settings-toggle"/);
+  assert.match(html, /id="settingsDialog"[^>]*data-testid="settings-dialog"/);
+  assert.match(html, /id="settingsPanel"/);
+  assert.match(html, /aria-label="打开高级配置"/);
+  assert.match(html, /aria-label="关闭高级配置"/);
+  assert.match(html, /class="settings-overlay"[^>]*hidden/);
+  assert.match(html, /id="settingsDialog"[\s\S]*id="senderFilters"[\s\S]*id="sessionMemory"[\s\S]*<\/div>\s*<\/div>\s*<div class="actions">/);
+  assert.ok(html.indexOf('accountPoolTitle') < html.indexOf('class="mailbox-row"'));
+  assert.ok(html.indexOf('class="mailbox-row"') < html.indexOf('settingsToggle'));
+  assert.match(script, /settingsToggle: document\.getElementById\('settingsToggle'\)/);
+  assert.match(script, /function openSettingsDialog\(\)/);
+  assert.match(script, /function closeSettingsDialog\(\)/);
+  assert.match(styles, /\.settings-overlay/);
+  assert.match(styles, /\.settings-panel/);
+});
+
 test('credential parser accepts pasted email password client token rows', () => {
   const { maskSecret, parseCredentialLine } = require('../public/app.js');
   const parsed = parseCredentialLine([

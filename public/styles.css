@@ -350,6 +350,18 @@ button:focus-visible {
   padding: 12px;
 }
 
+.mailbox-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: stretch;
+  margin: 2px 0 14px;
+}
+
+.mailbox-row .mailboxes {
+  margin: 0;
+}
+
 .mailboxes legend {
   padding: 0 6px;
 }
@@ -530,6 +542,54 @@ button:focus-visible {
   background: #e0ebff;
 }
 
+.settings-toggle {
+  align-self: center;
+  justify-self: end;
+  border-color: var(--border);
+  background: #ffffff;
+  color: #334155;
+}
+
+.settings-toggle:hover {
+  border-color: #b8c2d2;
+  background: var(--soft);
+}
+
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.42);
+}
+
+.settings-panel {
+  width: min(720px, 100%);
+  max-height: min(760px, calc(100vh - 48px));
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px;
+  background: #ffffff;
+  box-shadow: 0 22px 70px rgba(15, 23, 42, 0.22);
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+}
+
+.settings-header h3 {
+  font-size: 1rem;
+}
+
 .meta-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -659,8 +719,26 @@ button:focus-visible {
   }
 
   .mailboxes {
-    align-items: stretch;
-    flex-direction: column;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .mailbox-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .settings-toggle {
+    width: 44px;
+  }
+
+  .settings-overlay {
+    align-items: end;
+    padding: 12px;
+  }
+
+  .settings-panel {
+    max-height: calc(100vh - 24px);
   }
 
   .account-item {
