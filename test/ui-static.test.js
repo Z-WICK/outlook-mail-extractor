@@ -140,6 +140,41 @@ test('UI script automatically fetches messages after selecting a browser account
   assert.match(script, /await runMessageFetch\(\)/);
 });
 
+test('mail list pagination controls slice and navigate imported messages', () => {
+  const html = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
+  const script = fs.readFileSync(path.join(publicDir, 'app.js'), 'utf8');
+  const styles = fs.readFileSync(path.join(publicDir, 'styles.css'), 'utf8');
+  const { getMessagePageState } = require('../public/app.js');
+
+  assert.match(html, /id="messagePagination"[^>]*data-testid="message-pagination"[^>]*hidden/);
+  assert.match(html, /id="messagePrevPage"/);
+  assert.match(html, /id="messagePageInfo"/);
+  assert.match(html, /id="messageNextPage"/);
+  assert.match(script, /const MESSAGE_PAGE_SIZE = 6/);
+  assert.match(script, /let currentMessages = \[\]/);
+  assert.match(script, /let currentMessagePage = 1/);
+  assert.match(script, /function renderMessagePage\(\)/);
+  assert.match(script, /currentMessages = messages/);
+  assert.match(script, /currentMessagePage = 1/);
+  assert.match(script, /visibleMessages\.map\(renderMessageCard\)/);
+  assert.match(script, /elements\.messagePrevPage\.disabled = !pageState\.hasPreviousPage/);
+  assert.match(script, /elements\.messageNextPage\.disabled = !pageState\.hasNextPage/);
+  assert.match(styles, /\.message-pagination/);
+
+  const messages = Array.from({ length: 14 }, (_, index) => ({ id: String(index + 1) }));
+  const secondPage = getMessagePageState(messages, 2, 6);
+  assert.deepEqual(secondPage.visibleMessages.map((message) => message.id), ['7', '8', '9', '10', '11', '12']);
+  assert.equal(secondPage.currentPage, 2);
+  assert.equal(secondPage.totalPages, 3);
+  assert.equal(secondPage.hasPreviousPage, true);
+  assert.equal(secondPage.hasNextPage, true);
+
+  const clampedPage = getMessagePageState(messages, 99, 6);
+  assert.deepEqual(clampedPage.visibleMessages.map((message) => message.id), ['13', '14']);
+  assert.equal(clampedPage.currentPage, 3);
+  assert.equal(clampedPage.hasNextPage, false);
+});
+
 test('UI moves browser account pool into a dense modal grid', () => {
   const html = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
   const script = fs.readFileSync(path.join(publicDir, 'app.js'), 'utf8');

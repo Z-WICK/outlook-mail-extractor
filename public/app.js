@@ -1,7 +1,10 @@
 const SESSION_KEY = 'outlook-mail-extractor-ui';
 const ACCOUNT_STORAGE_KEY = 'outlook-mail-extractor-accounts-v1';
+const MESSAGE_PAGE_SIZE = 6;
 let pendingCredential = null;
 let selectedAccountId = '';
+let currentMessages = [];
+let currentMessagePage = 1;
 
 const elements = typeof document === 'undefined' ? null : {
   form: document.getElementById('extractorForm'),
@@ -47,6 +50,10 @@ const elements = typeof document === 'undefined' ? null : {
   codeJson: document.getElementById('codeJson'),
   messagesEmpty: document.getElementById('messagesEmpty'),
   messageList: document.getElementById('messageList'),
+  messagePagination: document.getElementById('messagePagination'),
+  messagePrevPage: document.getElementById('messagePrevPage'),
+  messagePageInfo: document.getElementById('messagePageInfo'),
+  messageNextPage: document.getElementById('messageNextPage'),
 };
 
 if (elements) {
@@ -92,6 +99,8 @@ function init() {
   elements.copyCodeButton.addEventListener('click', () => copyCurrentCode());
   elements.codeTab.addEventListener('click', () => activateTab('code'));
   elements.messagesTab.addEventListener('click', () => activateTab('messages'));
+  elements.messagePrevPage.addEventListener('click', () => setMessagePage(currentMessagePage - 1));
+  elements.messageNextPage.addEventListener('click', () => setMessagePage(currentMessagePage + 1));
   elements.sessionMemory.addEventListener('change', () => {
     if (elements.sessionMemory.checked) {
       persistSessionConfig();
@@ -604,9 +613,45 @@ function renderMessageResult(data) {
       .map((message) => ({ ...message, mailbox: message.mailbox || mailboxName }));
   });
 
-  elements.messageList.replaceChildren(...messages.map(renderMessageCard));
-  elements.messagesEmpty.hidden = messages.length > 0;
+  currentMessages = messages;
+  currentMessagePage = 1;
+  renderMessagePage();
   elements.resultMeta.textContent = `${messages.length} 封邮件`;
+}
+
+function renderMessagePage() {
+  const pageState = getMessagePageState(currentMessages, currentMessagePage, MESSAGE_PAGE_SIZE);
+  currentMessagePage = pageState.currentPage;
+  elements.messageList.replaceChildren(...pageState.visibleMessages.map(renderMessageCard));
+  elements.messagesEmpty.hidden = pageState.totalMessages > 0;
+  elements.messagePagination.hidden = pageState.totalPages <= 1;
+  elements.messagePageInfo.textContent = `第 ${pageState.currentPage} / ${pageState.totalPages} 页`;
+  elements.messagePrevPage.disabled = !pageState.hasPreviousPage;
+  elements.messageNextPage.disabled = !pageState.hasNextPage;
+}
+
+function setMessagePage(page) {
+  currentMessagePage = page;
+  renderMessagePage();
+}
+
+function getMessagePageState(messages, page = 1, pageSize = MESSAGE_PAGE_SIZE) {
+  const allMessages = Array.isArray(messages) ? messages : [];
+  const safePageSize = Math.max(1, Number(pageSize) || MESSAGE_PAGE_SIZE);
+  const totalMessages = allMessages.length;
+  const totalPages = Math.max(1, Math.ceil(totalMessages / safePageSize));
+  const currentPage = Math.min(Math.max(1, Number(page) || 1), totalPages);
+  const start = (currentPage - 1) * safePageSize;
+  const visibleMessages = allMessages.slice(start, start + safePageSize);
+
+  return {
+    currentPage,
+    hasNextPage: currentPage < totalPages,
+    hasPreviousPage: currentPage > 1,
+    totalMessages,
+    totalPages,
+    visibleMessages,
+  };
 }
 
 function renderMessageCard(message) {
@@ -763,6 +808,7 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     ACCOUNT_STORAGE_KEY,
     createMemoryStorage,
+    getMessagePageState,
     getStoredAccount,
     maskSecret,
     parseCredentialLine,
