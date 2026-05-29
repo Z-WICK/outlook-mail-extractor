@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Outlook Mail Extractor</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" role="img">
+            <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z"></path>
+            <path d="m5.5 7 6.1 5.2a1.2 1.2 0 0 0 1.6 0L19 7"></path>
+          </svg>
+        </div>
+        <div>
+          <h1>Outlook Mail Extractor</h1>
+          <p>本地邮件提取控制台</p>
+        </div>
+      </div>
+      <div class="status-pill" id="statusText" aria-live="polite">就绪</div>
+    </header>
+
+    <main class="workspace">
+      <section class="panel config-panel" aria-labelledby="configTitle">
+        <form id="extractorForm" novalidate>
+          <div class="panel-title">
+            <h2 id="configTitle">请求配置</h2>
+            <span>127.0.0.1</span>
+          </div>
+
+          <section class="import-box" aria-labelledby="importTitle">
+            <div class="import-title">
+              <h3 id="importTitle">快捷导入</h3>
+              <span>支持批量，每行一个邮箱</span>
+            </div>
+            <label class="field">
+              <span>账号凭证行</span>
+              <textarea id="credentialRaw" data-testid="credential-raw" rows="6" autocomplete="off" spellcheck="false" placeholder="邮箱----密码----client_id----令牌&#10;user1@outlook.com----password----client_id----refresh_token&#10;user2@outlook.com----password----client_id----refresh_token"></textarea>
+            </label>
+            <div class="import-actions">
+              <button class="button secondary" id="parseCredentialButton" data-testid="parse-credential" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3v12"></path>
+                  <path d="m7 10 5 5 5-5"></path>
+                  <path d="M5 21h14"></path>
+                </svg>
+                <span>解析并保存</span>
+              </button>
+              <span class="parsed-summary" id="parsedAccountSummary" data-testid="parsed-account-summary" hidden></span>
+            </div>
+          </section>
+
+          <section class="account-pool" aria-labelledby="accountPoolTitle">
+            <div class="import-title">
+              <h3 id="accountPoolTitle">浏览器邮箱池</h3>
+              <span id="accountCount">0 个邮箱</span>
+            </div>
+            <label class="field">
+              <span>搜索邮箱</span>
+              <input id="accountSearch" data-testid="account-search" type="text" autocomplete="off" spellcheck="false" placeholder="输入邮箱或 client_id">
+            </label>
+            <div class="account-list" id="accountList" data-testid="account-list" aria-live="polite"></div>
+          </section>
+
+          <input id="clientId" data-testid="client-id" name="clientId" type="hidden">
+          <input id="refreshToken" data-testid="refresh-token" name="refreshToken" type="hidden">
+
+          <fieldset class="mailboxes">
+            <legend>邮箱夹</legend>
+            <label class="check-option">
+              <input type="checkbox" name="mailbox" value="INBOX" checked>
+              <span>INBOX</span>
+            </label>
+            <label class="check-option">
+              <input type="checkbox" name="mailbox" value="Junk" checked>
+              <span>Junk</span>
+            </label>
+          </fieldset>
+
+          <div class="field-grid two">
+            <label class="field">
+              <span>发件人过滤</span>
+              <input id="senderFilters" name="senderFilters" type="text" placeholder="openai.com, microsoft.com">
+            </label>
+            <label class="field">
+              <span>主题过滤</span>
+              <input id="subjectFilters" name="subjectFilters" type="text" placeholder="login, code">
+            </label>
+            <label class="field">
+              <span>正文关键字</span>
+              <input id="requiredKeywords" name="requiredKeywords" type="text" placeholder="continue, verify">
+            </label>
+            <label class="field">
+              <span>排除验证码</span>
+              <input id="excludeCodes" name="excludeCodes" type="text" inputmode="numeric" placeholder="123456, 654321">
+            </label>
+          </div>
+
+          <div class="field-grid three">
+            <label class="field">
+              <span>每夹数量</span>
+              <input id="top" name="top" type="number" min="1" max="30" step="1" value="10">
+            </label>
+            <label class="field">
+              <span>重试次数</span>
+              <input id="maxRetries" name="maxRetries" type="number" min="1" max="50" step="1" value="3">
+            </label>
+            <label class="field">
+              <span>重试间隔 ms</span>
+              <input id="retryDelayMs" name="retryDelayMs" type="number" min="0" max="300000" step="250" value="10000">
+            </label>
+          </div>
+
+          <label class="field">
+            <span>只匹配此时间之后</span>
+            <input id="filterAfter" name="filterAfter" type="datetime-local">
+          </label>
+
+          <label class="checkline">
+            <input id="sessionMemory" data-testid="session-memory" type="checkbox">
+            <span>本次会话记住配置</span>
+          </label>
+
+          <div class="actions">
+            <button class="button primary" id="extractCodeButton" data-testid="extract-code" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9 11 12 14 22 4"></path>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+              </svg>
+              <span>提取验证码</span>
+            </button>
+            <button class="button secondary" id="fetchMessagesButton" data-testid="fetch-messages" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8Z"></path>
+              </svg>
+              <span>拉取邮件</span>
+            </button>
+          </div>
+
+          <div class="error-box" id="errorBox" role="alert" hidden></div>
+        </form>
+      </section>
+
+      <section class="panel result-panel" aria-labelledby="resultTitle">
+        <div class="result-header">
+          <div class="panel-title">
+            <h2 id="resultTitle">结果</h2>
+            <span id="resultMeta">等待请求</span>
+          </div>
+          <div class="tabs" data-testid="result-tabs" role="tablist" aria-label="结果视图">
+            <button class="tab active" id="codeTab" type="button" role="tab" aria-controls="codePanel" aria-selected="true">验证码</button>
+            <button class="tab" id="messagesTab" type="button" role="tab" aria-controls="messagesPanel" aria-selected="false">邮件列表</button>
+          </div>
+        </div>
+
+        <div class="result-body">
+          <section id="codePanel" role="tabpanel" aria-labelledby="codeTab">
+            <div class="empty-state" id="codeEmpty">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
+                <path d="m9 12 2 2 4-5"></path>
+              </svg>
+              <span>暂无验证码结果</span>
+            </div>
+            <div class="code-result" id="codeResult" hidden>
+              <div class="code-line">
+                <span id="codeValue">------</span>
+                <button class="icon-button" id="copyCodeButton" type="button" aria-label="复制验证码">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                </button>
+              </div>
+              <dl class="meta-grid" id="codeMeta"></dl>
+              <pre class="json-view" id="codeJson"></pre>
+            </div>
+          </section>
+
+          <section id="messagesPanel" role="tabpanel" aria-labelledby="messagesTab" hidden>
+            <div class="empty-state" id="messagesEmpty">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 4h16v16H4z"></path>
+                <path d="m22 6-10 7L2 6"></path>
+              </svg>
+              <span>暂无邮件列表</span>
+            </div>
+            <div class="message-list" id="messageList"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "outlook-mail-extractor",
+  "version": "0.1.0",
+  "description": "Standalone Outlook and Microsoft Graph mailbox extraction CLI.",
+  "license": "MIT",
+  "type": "commonjs",
+  "main": "src/microsoft-email.js",
+  "bin": {
+    "outlook-mail-extractor": "bin/outlook-mail-extractor.js",
+    "outlook-mail-extractor-ui": "bin/outlook-mail-extractor-ui.js"
+  },
+  "scripts": {
+    "ui": "node bin/outlook-mail-extractor-ui.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
