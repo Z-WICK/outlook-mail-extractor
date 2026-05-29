@@ -228,6 +228,34 @@ function removeStoredAccount(id, storage = getBrowserAccountStorage()) {
   return accounts.length !== nextAccounts.length;
 }
 
+function updateStoredAccountRefreshToken(id, nextRefreshToken, storage = getBrowserAccountStorage()) {
+  const accountId = normalizeAccountId(id);
+  const refreshToken = String(nextRefreshToken || '').trim();
+  if (!accountId || !refreshToken) {
+    return null;
+  }
+
+  const now = new Date().toISOString();
+  let updatedAccount = null;
+  const nextAccounts = readStoredAccounts(storage).map((account) => {
+    if (account.id !== accountId) {
+      return account;
+    }
+    updatedAccount = {
+      ...account,
+      refreshToken,
+      updatedAt: now,
+    };
+    return updatedAccount;
+  });
+  if (!updatedAccount) {
+    return null;
+  }
+
+  writeStoredAccounts(nextAccounts, storage);
+  return toStoredAccountSummary(updatedAccount);
+}
+
 function normalizeStoredAccount(account = {}) {
   const email = normalizeEmail(account.email || account.id);
   if (!email) return null;
@@ -395,7 +423,7 @@ async function deleteAccount(id) {
       throw new Error('账号不存在。');
     }
     if (selectedAccountId === id) {
-      selectedAccountId = '';
+      clearSelectedCredentialState();
     }
     setStatus('已删除', 'done');
     clearError();
@@ -438,6 +466,7 @@ async function runRequest({ endpoint, busyText, doneText, onSuccess }) {
     if (!response.ok || !payload.ok) {
       throw new Error(payload?.error?.message || `HTTP ${response.status}`);
     }
+    await applyNextRefreshToken(payload.data?.nextRefreshToken);
     onSuccess(payload.data);
     setStatus(doneText, 'done');
     if (elements.sessionMemory.checked) {
@@ -465,6 +494,40 @@ function collectFormPayload() {
     retryDelayMs: numberValue(elements.retryDelayMs.value),
     filterAfter: elements.filterAfter.value,
   };
+}
+
+async function applyNextRefreshToken(nextRefreshToken) {
+  const refreshToken = String(nextRefreshToken || '').trim();
+  if (!refreshToken) {
+    return;
+  }
+
+  elements.refreshToken.value = refreshToken;
+  if (pendingCredential) {
+    pendingCredential = {
+      ...pendingCredential,
+      refreshToken,
+    };
+  }
+
+  if (selectedAccountId) {
+    updateStoredAccountRefreshToken(selectedAccountId, nextRefreshToken);
+    await loadAccounts(elements.accountSearch.value);
+  }
+}
+
+function clearSelectedCredentialState() {
+  selectedAccountId = '';
+  pendingCredential = null;
+  elements.clientId.value = '';
+  elements.refreshToken.value = '';
+  elements.parsedAccountSummary.textContent = '';
+  elements.parsedAccountSummary.hidden = true;
+  if (elements.sessionMemory.checked) {
+    persistSessionConfig();
+  } else {
+    sessionStorage.removeItem(SESSION_KEY);
+  }
 }
 
 function selectedMailboxes() {
@@ -647,6 +710,7 @@ if (typeof module !== 'undefined' && module.exports) {
     searchStoredAccounts,
     selectCredentialDataLine,
     selectCredentialDataLines,
+    updateStoredAccountRefreshToken,
     upsertStoredAccounts,
   };
 }

@@ -82,6 +82,48 @@ test('browser account store persists, searches, loads, and deletes locally', () 
   assert.equal(searchStoredAccounts('', storage).length, 1);
 });
 
+test('browser account store updates returned refresh token locally', () => {
+  const {
+    createMemoryStorage,
+    getStoredAccount,
+    updateStoredAccountRefreshToken,
+    upsertStoredAccounts,
+  } = require('../public/app.js');
+  const storage = createMemoryStorage();
+
+  upsertStoredAccounts([{
+    email: 'Token.Owner@Outlook.com',
+    password: 'pass-1',
+    clientId: 'client-1',
+    refreshToken: 'old-refresh-token',
+  }], storage);
+
+  const updated = updateStoredAccountRefreshToken('token.owner@outlook.com', 'new-refresh-token', storage);
+
+  assert.equal(updated.email, 'token.owner@outlook.com');
+  assert.equal(updated.refreshToken, undefined);
+  assert.equal(updated.refreshTokenMasked, 'new-****oken');
+  assert.equal(getStoredAccount('token.owner@outlook.com', storage).refreshToken, 'new-refresh-token');
+});
+
+test('UI script applies returned refresh token to selected browser account after successful requests', () => {
+  const script = fs.readFileSync(path.join(publicDir, 'app.js'), 'utf8');
+
+  assert.match(script, /function applyNextRefreshToken\(nextRefreshToken\)/);
+  assert.match(script, /updateStoredAccountRefreshToken\(selectedAccountId, nextRefreshToken\)/);
+  assert.match(script, /applyNextRefreshToken\(payload\.data\?\.nextRefreshToken\)/);
+});
+
+test('UI script clears selected browser credential state after deleting current account', () => {
+  const script = fs.readFileSync(path.join(publicDir, 'app.js'), 'utf8');
+
+  assert.match(script, /function clearSelectedCredentialState\(\)/);
+  assert.match(script, /pendingCredential = null/);
+  assert.match(script, /elements\.clientId\.value = ''/);
+  assert.match(script, /elements\.refreshToken\.value = ''/);
+  assert.match(script, /if \(selectedAccountId === id\) \{\s*clearSelectedCredentialState\(\);\s*\}/s);
+});
+
 test('credential parser accepts pasted email password client token rows', () => {
   const { maskSecret, parseCredentialLine } = require('../public/app.js');
   const parsed = parseCredentialLine([
