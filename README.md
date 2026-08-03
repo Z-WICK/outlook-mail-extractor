@@ -1,6 +1,6 @@
 # Outlook Mail Extractor
 
-从 GuJumpgate 中拆出的独立 Outlook / Microsoft Graph 邮件提取工具。它可以通过 `client_id` + `refresh_token` 换取访问令牌，读取 Inbox / Junk 邮件，并按发件人、主题、关键字等条件提取 6 位验证码。
+独立的 Outlook / Microsoft Graph 邮件提取工具。它可以通过 `client_id` + `refresh_token` 换取访问令牌，读取 Inbox / Junk 邮件，并按发件人、主题、关键字等条件提取 6 位验证码。
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Z-WICK/outlook-mail-extractor/tree/main)
 
@@ -17,7 +17,7 @@
 ## 安装与测试
 
 ```bash
-cd /Users/wick/Documents/vibe_codeing/cli/tools/codex-re/outlook-mail-extractor
+cd outlook-mail-extractor
 npm test
 ```
 
