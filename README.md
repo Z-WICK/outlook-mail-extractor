@@ -2,6 +2,10 @@
 
 从 GuJumpgate 中拆出的独立 Outlook / Microsoft Graph 邮件提取工具。它可以通过 `client_id` + `refresh_token` 换取访问令牌，读取 Inbox / Junk 邮件，并按发件人、主题、关键字等条件提取 6 位验证码。
 
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Z-WICK/outlook-mail-extractor/tree/main)
+
+上面的按钮用于一键部署 Cloudflare Worker 版本；服务器版 Node CLI 和 UI 仍然保留，服务器部署不会被替换。按钮部署完成后，如需绑定自定义域名或配置 Cloudflare Access，请在 Cloudflare 控制台中继续配置。
+
 ## 环境要求
 
 - Node.js 18+
