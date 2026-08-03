@@ -11,9 +11,17 @@
   },
   "scripts": {
     "ui": "node bin/outlook-mail-extractor-ui.js",
-    "test": "node --test"
+    "test": "node --test",
+    "dev": "wrangler dev",
+    "check": "wrangler deploy --dry-run",
+    "types": "wrangler types",
+    "deploy": "wrangler deploy"
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "wrangler": "^4.118.0"
   }
 }

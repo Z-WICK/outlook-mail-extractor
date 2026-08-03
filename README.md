@@ -116,6 +116,28 @@ npm run ui -- --host 127.0.0.1 --port 8787
 - 验证码提取与邮件列表两个结果视图
 - “本次会话记住配置”开关，仅使用浏览器 `sessionStorage`
 
+## Cloudflare Workers 部署
+
+仓库包含独立的 Worker 入口 `src/worker.mjs` 和 `wrangler.jsonc`。原来的 CLI 和 Node UI 仍然可以继续本地运行。
+
+先安装 Wrangler 并检查配置：
+
+```bash
+npm install
+npm run check
+npm run dev
+```
+
+确认本地 Worker 正常后部署：
+
+```bash
+npm run deploy
+```
+
+Worker 使用 Microsoft Graph / Outlook 的 HTTPS API，不需要常驻进程或服务器文件。邮箱池和 refresh token 仍只保存在浏览器本地，并随当前请求发送；Worker 不会把账号写入 Cloudflare 存储。
+
+生产环境建议把 Worker 绑定在受 Cloudflare Access 保护的自定义域名下，避免公开 API 被第三方滥用。不要把 Microsoft refresh token 写入 `wrangler.jsonc` 或提交到 GitHub。
+
 快捷导入里的账号只会写入当前浏览器的 `localStorage`，不会写入服务器文件，也不会通过 `/api/accounts` 暴露共享邮箱池。换浏览器、换设备或清理站点数据后，需要重新导入。
 
 UI 服务默认监听本机地址，部署时可以通过 Caddy 等网关反代。API 响应不会返回 Microsoft `access_token`。如果接口返回了新的 `refresh_token`，页面会在结果中显示其存在状态，JSON API 会保留 `nextRefreshToken` 供你更新配置。
